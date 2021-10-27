@@ -1,4 +1,4 @@
-# portfolio-tracker
+# coinbase-parser
 
 ## Instructions
 
@@ -11,6 +11,8 @@ Move your account statements into the repo's directory and rename the Coinbase a
 Run `python3 coinbase_parser.py`
 
 Your portfolio will be stored in `coinbase_portfolio.json`
+
+## Output
 
 Example portfolio entry for MATIC:
 ```
@@ -36,18 +38,18 @@ Example portfolio entry for MATIC:
 }
 ```
 
-*avg_cost:* Average cost of all MATIC purchased
+**avg_cost:** Average cost of all MATIC purchased
 
-*amount:* Amount of MATIC currently held on Coinbase/Pro
+**amount:** Amount of MATIC currently held on Coinbase/Pro
 
-*usd_spent:* Total amount of USD spent on MATIC
+**usd_spent:** Total amount of USD spent on MATIC
 
-*sold, qty:* List of amounts of MATIC sold during each sell order
+**sold, qty:** List of amounts of MATIC sold during each sell order
 
-*sold, prices:* List of prices MATIC was at during each sell order
+**sold, prices:** List of prices MATIC was at during each sell order
 
-*sold, total_usd:* Total USD accrued from sales of MATIC
+**sold, total_usd:** Total USD accrued from sales of MATIC
 
-*sent*: Total amount of MATIC that has been sent to another wallet.
+**sent:** Total amount of MATIC that has been sent to another wallet.
 
-NOTE: Crypto that has been sent from Coinbase to other wallets will only show the total amount of that crypto that has been sent
+*NOTE:* Crypto that has been sent from Coinbase to other wallets will only show the total amount of that crypto that has been sent
