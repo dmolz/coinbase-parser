@@ -2,13 +2,13 @@
 
 ## Instructions
 
-Clone this repo
+1. Clone this repo
 
-Download your account statements in .csv format from coinbase.com and/or pro.coinbase.com
+2. Generate and download your account statements in .csv format from [Coinbase](https://www.coinbase.com/reports) and/or [Coinbase Pro](https://pro.coinbase.com/profile/statements)
 
-Move your account statements into the repo's directory and rename the Coinbase account statement to `coinbase.csv` and the Coinbase Pro account statement to `coinbasepro.csv`
+3. Move your account statements into the repo's directory and rename the Coinbase account statement to `coinbase.csv` and the Coinbase Pro account statement to `coinbasepro.csv`
 
-Run `python3 coinbase_parser.py`
+4. Run the script with `python3 coinbase_parser.py`
 
 Your portfolio will be stored in `coinbase_portfolio.json`
 
