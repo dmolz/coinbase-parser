@@ -3,6 +3,42 @@ import csv
 import json
 import sys
 import os
+from datetime import datetime
+# from math import round
+import cryptocompare
+
+def get_portfolio_value(crypto_dict):
+	"""
+	Get total portfolio value including sales
+	"""
+	total_value = 0
+	total_return = 0
+	for asset in crypto_dict:
+		c = crypto_dict[asset]
+		total_value += c["market_value"]
+		total_return += c["total_return"]
+
+	result = {
+		"portfolio_value": {
+			"datetime": str(datetime.now()),
+			"total_value": round(total_value, 2),
+			"total_return": round(total_return, 2)
+		},
+		"portfolio": crypto_dict
+	}
+	return result
+
+def get_current_prices(crypto_dict):
+	"""
+	Use cryptocompare API to get current prices on all crypto
+	"""
+	for asset in crypto_dict:
+		c = crypto_dict[asset]
+		price = cryptocompare.get_price(asset, currency='USD', full=True)\
+				["RAW"][asset]["USD"]["PRICE"]
+		c["current_price"] = price
+		c["market_value"] = round(c["amount"] * c["current_price"], 2)
+		c["total_return"] = round(c["market_value"] - c["usd_spent"] + c["sold"]["total_usd"] + c["sent"] * price, 2)
 
 def get_crypto_dict(trade_dict):
 	"""
@@ -12,13 +48,13 @@ def get_crypto_dict(trade_dict):
 	crypto_dict = {}
 	for trade_id in trade_dict:
 		trade = trade_dict[trade_id]
-		token = trade["token"]
-		if token == "":
+		asset = trade["token"]
+		if asset == "":
 			continue
 		
 		# put new crypto in dict
 		if trade["token"] not in crypto_dict and trade["token"] != "USD":
-			crypto_dict[token] = {
+			crypto_dict[asset] = {
 				"avg_cost": 0,
 				"amount": 0,
 				"usd_spent": 0,
@@ -32,22 +68,30 @@ def get_crypto_dict(trade_dict):
 
 		# add values to dict
 		if trade["type"] == "buy":
-			crypto_dict[token]["amount"] += trade["token_amount"]
-			crypto_dict[token]["usd_spent"] += trade["usd"]
+			crypto_dict[asset]["amount"] += trade["token_amount"]
+			crypto_dict[asset]["usd_spent"] += trade["usd"]
 		elif trade["type"] == "sell":
-			crypto_dict[token]["sold"]["qty"].append(trade["token_amount"])
-			crypto_dict[token]["sold"]["prices"].append(trade["price"])
+			crypto_dict[asset]["sold"]["qty"].append(round(trade["token_amount"], 4))
+			crypto_dict[asset]["sold"]["prices"].append(round(trade["price"], 4))
 		elif trade["type"] == "send":
-			crypto_dict[token]["sent"] += trade["sent"]
+			crypto_dict[asset]["sent"] += trade["sent"]
 
 	for asset in crypto_dict:
-		crypto_dict[asset]["avg_cost"] = crypto_dict[asset]["usd_spent"] / \
-										 crypto_dict[asset]["amount"]
-		crypto_dict[asset]["amount"] -= sum(crypto_dict[asset]["sold"]["qty"])
-		crypto_dict[asset]["amount"] -= crypto_dict[asset]["sent"]
-		for i in range(len(crypto_dict[asset]["sold"]["qty"])):
-			crypto_dict[asset]["sold"]["total_usd"] += \
-				crypto_dict[asset]["sold"]["qty"][i] * crypto_dict[asset]["sold"]["prices"][i]
+		c = crypto_dict[asset]
+
+		# Calculations
+		c["avg_cost"] = round(c["usd_spent"] / c["amount"], 4)
+		c["amount"] -= sum(c["sold"]["qty"])
+		c["amount"] -= c["sent"]
+
+		# Rounding
+		c["usd_spent"] = round(c["usd_spent"], 2)
+		c["amount"] = round(c["amount"], 4)
+
+		# Sells
+		for i in range(len(c["sold"]["qty"])):
+			c["sold"]["total_usd"] += c["sold"]["qty"][i] * c["sold"]["prices"][i]
+			c["sold"]["total_usd"] = round(c["sold"]["total_usd"], 4)
 
 	return crypto_dict
 
@@ -182,10 +226,6 @@ def parse_coinbase_pro(filename):
 	return trade_dict
 
 if __name__ == "__main__":
-	# Check command line args
-	# if len(sys.argv) > 3:
-	# 	print("Invalid command line args!")
-
 	# Parse csv files
 	cb_dict = {}
 	cbpro_dict = {}
@@ -200,8 +240,10 @@ if __name__ == "__main__":
 
 	# Parse trades
 	crypto_dict = get_crypto_dict(trade_dict)
+	get_current_prices(crypto_dict)
+	result = get_portfolio_value(crypto_dict)
 	
 	f = open("coinbase_portfolio.json", 'w')
-	f.write(json.dumps(crypto_dict, indent=4))
+	f.write(json.dumps(result, indent=4))
 	f.close()
 
