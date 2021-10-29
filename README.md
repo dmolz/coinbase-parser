@@ -21,7 +21,7 @@ Your portfolio will be stored in `coinbase_portfolio.json`
 Example portfolio entry for MATIC:
 ```
 {
-	"MATIC": {
+    "MATIC": {
         "avg_cost": 0.3685626328056357, 
         "amount": 347.37426439,
         "usd_spent": 513.91425,
@@ -39,6 +39,7 @@ Example portfolio entry for MATIC:
             "total_usd": 1598.1128703
         },
         "sent": 0
+    }
 }
 ```
 
@@ -59,4 +60,3 @@ Example portfolio entry for MATIC:
 *NOTE:* Crypto that has been sent from Coinbase to other wallets will only show the total amount of that crypto that has been sent
 
 At the top of the output JSON will also be an entry with your portfolio's current value (which calculates the value in USD of all assets currently held, not factoring in sales) and total return (which calculates the amount of current unrealized gains plus sales)
- 
