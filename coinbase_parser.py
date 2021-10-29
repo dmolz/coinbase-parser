@@ -4,7 +4,6 @@ import json
 import sys
 import os
 from datetime import datetime
-# from math import round
 import cryptocompare
 
 def get_portfolio_value(crypto_dict):
@@ -34,8 +33,7 @@ def get_current_prices(crypto_dict):
 	"""
 	for asset in crypto_dict:
 		c = crypto_dict[asset]
-		price = cryptocompare.get_price(asset, currency='USD', full=True)\
-				["RAW"][asset]["USD"]["PRICE"]
+		price = cryptocompare.get_price(asset, currency="USD")[asset]["USD"]
 		c["current_price"] = price
 		c["market_value"] = round(c["amount"] * c["current_price"], 2)
 		c["total_return"] = round(c["market_value"] - c["usd_spent"] + c["sold"]["total_usd"] + c["sent"] * price, 2)
@@ -76,6 +74,7 @@ def get_crypto_dict(trade_dict):
 		elif trade["type"] == "send":
 			crypto_dict[asset]["sent"] += trade["sent"]
 
+	# More calculations and rounding
 	for asset in crypto_dict:
 		c = crypto_dict[asset]
 
@@ -131,26 +130,36 @@ def parse_coinbase(filename):
 				"sent": 0
 			}
 
+		# Buy
 		if trade_type == "Buy":
 			trade_dict[trade_id]["type"] = "buy"
 			trade_dict[trade_id]["usd"] += abs(amount_usd)
 			trade_dict[trade_id]["token_amount"] += abs(amount)
 			trade_dict[trade_id]["price"] = price
+
+		# Sell
 		elif trade_type == "Sell":
 			trade_dict[trade_id]["type"] = "sell"
 			trade_dict[trade_id]["usd"] += abs(amount_usd)
 			trade_dict[trade_id]["token_amount"] += abs(amount)
 			trade_dict[trade_id]["price"] = price
+
+		# Rewards Income or Coinbase Earn
 		elif trade_type == "Rewards Income" or trade_type == "Coinbase Earn":
 			trade_dict[trade_id]["type"] = "buy"
 			trade_dict[trade_id]["token_amount"] += abs(amount)
 			trade_dict[trade_id]["price"] = price
+
+		# Send
 		elif trade_type == "Send":
 			trade_dict[trade_id]["type"] = "send"
 			trade_dict[trade_id]["sent"] += amount
+
+		# Unhandled trade
 		else:
 			print(f"Unhandled trade type: {trade_type}")
 			continue
+	
 	f.close()
 	return trade_dict
 
