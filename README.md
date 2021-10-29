@@ -22,23 +22,24 @@ Example portfolio entry for MATIC:
 ```
 {
     "MATIC": {
-        "avg_cost": 0.3685626328056357, 
-        "amount": 347.37426439,
-        "usd_spent": 513.91425,
+        "avg_cost": 0.3686,
+        "amount": 347.3743,
+        "usd_spent": 513.91,
         "sold": {
             "qty": [
-                0.6,
-                696.4,
+                700.0,
                 350.0
             ],
             "prices": [
-                1.0418835000000002,
-                1.0412804999999998,
+                1.0413,
                 2.4924
             ],
-            "total_usd": 1598.1128703
+            "total_usd": 1598.1264
         },
-        "sent": 0
+        "sent": 0,
+        "current_price": 2.074,
+        "market_value": 720.45,
+        "total_return": 1804.67
     }
 }
 ```
@@ -56,6 +57,12 @@ Example portfolio entry for MATIC:
 **sold, total_usd:** Total USD accrued from sales of MATIC
 
 **sent:** Total amount of MATIC that has been sent to another wallet.
+
+**current_price:** Current price of MATIC in USD
+
+**market_value:** Market value of all MATIC currently held
+
+**total_return:** Sum of all MATIC currently held and previously sold minus total amount of USD spent (also subtracts what would be the market value of all that was sent to another wallet, will probably change that part in the future)
 
 *NOTE:* Crypto that has been sent from Coinbase to other wallets will only show the total amount of that crypto that has been sent
 

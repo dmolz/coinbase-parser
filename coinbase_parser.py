@@ -23,7 +23,7 @@ def get_portfolio_value(crypto_dict):
 			"total_value": round(total_value, 2),
 			"total_return": round(total_return, 2)
 		},
-		"portfolio": crypto_dict
+		"assets": crypto_dict
 	}
 	return result
 
@@ -159,7 +159,7 @@ def parse_coinbase(filename):
 		else:
 			print(f"Unhandled trade type: {trade_type}")
 			continue
-	
+
 	f.close()
 	return trade_dict
 
